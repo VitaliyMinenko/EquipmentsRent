@@ -57,3 +57,22 @@ http://www.test.loc
     }
 }
 ```
+##### Configuration for Apache server.
+```
+<VirtualHost *:80>
+    DocumentRoot "c:/home/www/www.exemple.loc/public_html"
+    ServerName www.test.loc
+	
+	<Directory C:/home/www/www.exemple.loc/public_html>
+        AllowOverride All
+        Order Allow,Deny
+        Allow from All
+ 
+        <IfModule mod_rewrite.c>
+            Options -MultiViews
+            RewriteEngine On
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteRule ^(.*)$ app.php [QSA,L]
+        </IfModule>
+    </Directory>
+```
