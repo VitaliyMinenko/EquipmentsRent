@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Lib\GitHub;
 
+/**
+ * Base controller for Api.
+ * Class ApiController
+ * @package App\Http\Controllers
+ */
 class ApiController extends Controller
 {
     /**
@@ -17,11 +22,14 @@ class ApiController extends Controller
         //
     }
 
+    /**
+     * Base api method which returned information about repositories.
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getInfo(Request $request)
     {
-//        $secondRepositoryName = 'schibsfasfasdfasdfasted/asdsdadasdasd adasda sdasd as';
-//        $firstRepositoryName = 'schibstedudp-pipe';
-         $firstRepositoryName = $request->input('first_repository');
+        $firstRepositoryName = $request->input('first_repository');
         $secondRepositoryName = $request->input('second_repository');
         $firstRepository = explode('/', $firstRepositoryName);
         $secondRepository = explode('/', $secondRepositoryName);
@@ -41,8 +49,5 @@ class ApiController extends Controller
             $secondRepositoryName => $repositoryInfoSecond,
         ];
         return response()->json($answer);
-
     }
-
-
 }

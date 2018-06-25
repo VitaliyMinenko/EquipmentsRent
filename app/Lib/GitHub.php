@@ -30,7 +30,12 @@ class GitHub
         $this->repository = $repository;
     }
 
-
+    /**
+     * Method for call to github Api.
+     * @param $param
+     * @param bool $fullSearch
+     * @return array
+     */
     private function call($param, $fullSearch = false)
     {
 
@@ -62,6 +67,10 @@ class GitHub
 
     }
 
+    /**
+     * Method for getting information about pull requests.
+     * @return array
+     */
     private function getPullRequests()
     {
         $pullRequests = $this->call(self::PULL_REQUEST);
@@ -83,6 +92,10 @@ class GitHub
         return $result;
     }
 
+    /**
+     * Method for getting information last release.
+     * @return false|string
+     */
     private function getLatestRelease()
     {
         $release = $this->call(self::RELEASE);
@@ -94,6 +107,10 @@ class GitHub
 
     }
 
+    /**
+     * Method for getting information repository.
+     * @return false|string
+     */
     public function getRepositoryInfo()
     {
         $request = self::REPOSITORY_INFO . $this->author . '/' . $this->repository;

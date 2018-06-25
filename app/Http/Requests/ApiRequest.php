@@ -24,7 +24,8 @@ class ApiRequest extends Request
     public function rules()
     {
         return [
-            //
+            'first_repository' => 'required|max:55|string',
+            'second_repository' =>'required|max:55|string'
         ];
     }
 }
