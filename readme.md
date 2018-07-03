@@ -1,4 +1,4 @@
-##Equipments rent
+# Equipments rent
 #### Version 1.0b
 #### Author: Vitalii Minenko
 
