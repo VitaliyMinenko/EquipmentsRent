@@ -17,6 +17,8 @@ Route::get('/', function (Symfony\Component\HttpFoundation\Response $respnce) {
         'state' => 'Url is not found.'
     ])->header('Content-Type', 'json');
 });
-Route::get('api/getInfo/', 'ApiController@getInfo');
-Route::post('api/getInfo/', 'ApiController@getInfo');
+Route::get('api/getRentPeriod/', 'ApiController@getRentPeriod');
+Route::post('api/getRentPeriod/', 'ApiController@getRentPeriod');
+Route::post('api/addRentPeriod/', 'ApiController@addRentPeriod');
+Route::get('api/addRentPeriod/', 'ApiController@addRentPeriod');
 

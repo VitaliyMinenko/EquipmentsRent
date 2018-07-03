@@ -1,23 +1,36 @@
-# Api for get information from GitHub repositories
+##Equipments rent
 #### Version 1.0b
 #### Author: Vitalii Minenko
 
-A simple application that provides an interface for retrieving statistics on GitHub repositories
+A simple application  which will help us to check available equipment for rent.
 
-##### Url for request.
+##### Configuration.
 
-```
-http://www.test.loc
-```
-
-##### Params for request.
+The config in our application you can found into .env file.
+* Exemple for db config
 
 ```
-{
-	"first_repository":"VitaliyMinenko/app",
-	"second_repository":"VitaliyMinenko/statx"
-}
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=data
+DB_USERNAME=root
+DB_PASSWORD=101010101
 ```
+
+##### Haw it use.
+For start application you must have min PHP 5.4.0
+* Start the application from the public_html folder
+* When you are in a public_html folder , type the command php -s localhost:3000 in the command line
+* You can check application in your browser im address localhost:3000
+* When you set all configurations for connection to database type next commands.
+```
+php artisan migrate
+``` 
+```
+php artisan db:seed --class=EqupmentTableSeeder
+``` 
+* Now application is ready you can use it with API interfaces:
 
 ##### Method of HTTP Request.
 
@@ -27,52 +40,68 @@ http://www.test.loc
 * Content-Type : application/json
 * Accept       : application/json
 
-##### Example of answer.
-```$xslt
+
+
+##### Api commands and example of answers.
+
+If we wont to check in which days our equipment is on rent.
+
+* Example Url for check.
+```
+http://localhost:8000/api/getRentPeriod/
+```
+##### Api can accept the following parameters.
+* date - Date with which we begin the search in format `2018-01-01`.
+* N - Days in which we are looking for rent fromat `4`.
+
+```
 {
-    "status": "ok",
-    "VitaliyMinenko/app": {
-        "VitaliyMinenko/app": {
-            "Number of forks": 0,
-            "Number of stars": 0,
-            "Number of watchers": 0,
-            "Date of the latest release": "Date is undefined",
-            "Pull requests": {
-                "open": 0,
-                "close": 0
-            }
-        }
-    },
-    "VitaliyMinenko/statx": {
-        "VitaliyMinenko/statx": {
-            "Number of forks": 0,
-            "Number of stars": 0,
-            "Number of watchers": 0,
-            "Date of the latest release": "Date is undefined",
-            "Pull requests": {
-                "open": 0,
-                "close": 0
-            }
-        }
+	{
+    	"date":"2018-06-29",
+    	"N":"3"
+
     }
 }
 ```
-##### Configuration for Apache server.
+
+
+If we wont to set new rent period or add new Equipment with rent period.
+* Example Url for set new Rent dates for equipment. If equipment not exist we add id like new into db. 
+Put the rent period in the first closest suitable for the parameters of the day of the week. If it will not available api will 
+return `Day is not empty. Try to choose another day.`
 ```
-<VirtualHost *:80>
-    DocumentRoot "c:/home/www/www.exemple.loc/public_html"
-    ServerName www.test.loc
-	
-	<Directory C:/home/www/www.exemple.loc/public_html>
-        AllowOverride All
-        Order Allow,Deny
-        Allow from All
- 
-        <IfModule mod_rewrite.c>
-            Options -MultiViews
-            RewriteEngine On
-            RewriteCond %{REQUEST_FILENAME} !-f
-            RewriteRule ^(.*)$ app.php [QSA,L]
-        </IfModule>
-    </Directory>
+http://localhost:8000/api/addRentPeriod/
 ```
+##### Api can accept the following parameters.
+* equpment - Name od equipment
+* week_day - Nmae of week day in format Short english week days `Thu`
+* duration - Period of rent in day format `H:i`.
+
+```
+{
+	{
+    	"equpment":"Excavator 011",
+    	"week_day":"Tue"
+    	"duration": {
+    		"start_duration": "9:00"
+    		"end_time" : "14:00"
+    	}
+    }
+}
+```
+* Example of answers .
+```
+{
+status: "ok",
+message: "Day is not empty. Try to choose another day."
+}
+```
+Or
+```
+{
+status: "ok",
+message: "The date was add successfully.."
+}
+
+```
+
