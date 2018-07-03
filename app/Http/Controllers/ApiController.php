@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Equipment;
 use App\Rent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
+
 
 /**
  * Base controller for Api.
@@ -35,14 +35,15 @@ class ApiController extends Controller
     public function getRentPeriod(Request $request)
     {
         $date = $request->input('date');
-        $shift = $request->input('N');
-        return response()->json([
-            'status' => 'ok',
-            'response' => $date,
-        ]);
-        dd($date);
+        $shift = $request->input('days');
         $equpment = new Equipment();
-        $response = $equpment->getAvailable('2018-07-01', '3');
+        $response = $equpment->getAvailable($date, $shift);
+        if(empty($response)){
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Nothing not found.',
+            ]);
+        }
 
         return response()->json([
             'status' => 'ok',
@@ -57,15 +58,15 @@ class ApiController extends Controller
      */
     public function addRentPeriod(Request $request)
     {
-
-        $weekDay = 'Sat';
-        $start = '14:00';
-        $finish = '18:00';
-        $equpment = Equipment::with('rents')->firstOrCreate(['name' => 'Excavator 0113344']);
-        $rentsArray = $equpment->checkAndSetDays($weekDay, $start, $finish);
+        $equpmentName = $request->input('equipment');
+        $weekDay = $request->input('week_day');
+        $start = $request->input('duration.start_duration');
+        $finish = $request->input('duration.end_time');
+        $equipment = Equipment::with('rents')->firstOrCreate(['name' => $equpmentName]);
+        $rentsArray = $equipment->checkAndSetDays($weekDay, $start, $finish);
         if ($rentsArray) {
-            $equpment->save();
-            $equpment->rents()->save(new Rent($rentsArray));
+            $equipment->save();
+            $equipment->rents()->save(new Rent($rentsArray));
 
             return response()->json([
                 'status' => 'ok',

@@ -38,9 +38,6 @@ php artisan db:seed --class=EqupmentTableSeeder
 
 ##### Headers of HTTP Request.
 * Content-Type : application/json
-* Accept       : application/json
-
-
 
 ##### Api commands and example of answers.
 
@@ -55,13 +52,10 @@ http://localhost:8000/api/getRentPeriod/
 * N - Days in which we are looking for rent fromat `4`.
 
 ```
-{
 	{
     	"date":"2018-06-29",
-    	"N":"3"
-
+    	"days":"3"
     }
-}
 ```
 
 
@@ -78,15 +72,13 @@ http://localhost:8000/api/addRentPeriod/
 * duration - Period of rent in day format `H:i`.
 
 ```
-{
-	{
-    	"equpment":"Excavator 011",
-    	"week_day":"Tue"
-    	"duration": {
-    		"start_duration": "9:00"
-    		"end_time" : "14:00"
-    	}
-    }
+{  
+   "equipment":"Excavator 011",
+   "week_day":"Tue",
+   "duration":{  
+      "start_duration":"9:00",
+      "end_time":"14:00"
+   }
 }
 ```
 * Example of answers .

@@ -7,19 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Equipment extends Model
 {
+    /**
+     * @var string Name of the table
+     */
 	protected $table = 'equipments';
 
+    /**
+     * @var array  Names od the fields.
+     */
 	protected $fillable = [
 		'name',
 		'created_at',
 		'updated_at',
 	];
 
+    /**
+     * Relation with child model.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function rents()
 	{
 		return $this->hasMany('App\Rent');
 	}
 
+    /**
+     * Get available dates and hours when we have our equipment in rent.
+     * @param $startDate
+     * @param $shiftDays
+     * @return array
+     */
 	public function getAvailable($startDate, $shiftDays)
 	{
 		$preparedData = $this->prepareData($startDate, $shiftDays);
@@ -32,6 +48,13 @@ class Equipment extends Model
 		return $result;
 	}
 
+    /**
+     * Check are we have this date if not set new date.
+     * @param $weekDay
+     * @param $start
+     * @param $finish
+     * @return array|bool
+     */
 	public function checkAndSetDays($weekDay, $start, $finish)
 	{
 		$start = explode(':', $start);
@@ -62,6 +85,11 @@ class Equipment extends Model
 		}
 	}
 
+    /**
+     * Convert timestamps to human readable format.
+     * @param $countedData
+     * @return mixed
+     */
 	protected function convertToReadbleFormat($countedData)
 	{
 		foreach($countedData as $key => $dateArr) {
@@ -78,6 +106,11 @@ class Equipment extends Model
 		return $countedData;
 	}
 
+    /**
+     * Count our rent period per day.
+     * @param $preparedData
+     * @return mixed
+     */
 	protected function countRents($preparedData)
 	{
 		foreach($preparedData as $key => $rentTerms) {
@@ -90,6 +123,11 @@ class Equipment extends Model
 		return $preparedData;
 	}
 
+    /**
+     * Get work hours and sum it per day.
+     * @param $arr
+     * @return mixed
+     */
 	protected function getWorkHours($arr)
 	{
 		$lenght = count($arr);
@@ -111,6 +149,12 @@ class Equipment extends Model
 		return $arr;
 	}
 
+    /**
+     * Get all equipment and take equipment from next N days.
+     * @param $startDate
+     * @param $shiftDays
+     * @return array
+     */
 	protected function prepareData($startDate, $shiftDays)
 	{
 		$date = Carbon::parse($startDate);
