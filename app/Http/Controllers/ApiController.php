@@ -34,6 +34,13 @@ class ApiController extends Controller
      */
     public function getRentPeriod(Request $request)
     {
+        $date = $request->input('date');
+        $shift = $request->input('N');
+        return response()->json([
+            'status' => 'ok',
+            'response' => $date,
+        ]);
+        dd($date);
         $equpment = new Equipment();
         $response = $equpment->getAvailable('2018-07-01', '3');
 
