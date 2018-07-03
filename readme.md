@@ -92,7 +92,7 @@ Or
 ```
 {
 status: "ok",
-message: "The date was add successfully.."
+message: "The date was add successfully."
 }
 
 ```
