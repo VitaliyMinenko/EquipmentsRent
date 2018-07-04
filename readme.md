@@ -4,24 +4,10 @@
 
 A simple application  which will help us to check available equipment for rent.
 
-##### Configuration.
-
-The config in our application you can found into .env file.
-* Exemple for db config
-
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=data
-DB_USERNAME=root
-DB_PASSWORD=101010101
-```
-
-##### Haw it use.
+##### Haw we can start app.
 For start application you must have min PHP 5.4.0
 * Start the application from the public_html folder
-* When you are in a public_html folder , type the command php -s localhost:3000 in the command line
+* When you are in a public_html folder , type the command php -S localhost:3000 in the command line
 * You can check application in your browser im address localhost:3000
 * When you set all configurations for connection to database type next commands.
 ```
