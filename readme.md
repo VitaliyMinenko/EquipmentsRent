@@ -4,7 +4,7 @@
 
 A simple application  which will help us to check available equipment for rent.
 
-##### Haw we can start app.
+##### Haw we can start the application.
 For start application you must have min PHP 5.4.0
 * Start the application from the public_html folder
 * When you are in a public_html folder , type the command php -S localhost:3000 in the command line
@@ -14,7 +14,7 @@ For start application you must have min PHP 5.4.0
 php artisan migrate
 ``` 
 ```
-php artisan db:seed --class=EqupmentTableSeeder
+php artisan db:seed 
 ``` 
 * Now application is ready you can use it with API interfaces:
 
@@ -80,6 +80,5 @@ Or
 status: "ok",
 message: "The date was add successfully."
 }
-
 ```
 
