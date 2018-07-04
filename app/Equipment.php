@@ -7,35 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 
 class Equipment extends Model
 {
-    /**
-     * @var string Name of the table
-     */
+	/**
+	 * @var string Name of the table
+	 */
 	protected $table = 'equipments';
 
-    /**
-     * @var array  Names od the fields.
-     */
+	/**
+	 * @var array  Names od the fields.
+	 */
 	protected $fillable = [
 		'name',
 		'created_at',
 		'updated_at',
 	];
 
-    /**
-     * Relation with child model.
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	/**
+	 * Relation with child model.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function rents()
 	{
 		return $this->hasMany('App\Rent');
 	}
 
-    /**
-     * Get available dates and hours when we have our equipment in rent.
-     * @param $startDate
-     * @param $shiftDays
-     * @return array
-     */
+	/**
+	 * Get available dates and hours when we have our equipment in rent.
+	 *
+	 * @param $startDate
+	 * @param $shiftDays
+	 *
+	 * @return array
+	 */
 	public function getAvailable($startDate, $shiftDays)
 	{
 		$preparedData = $this->prepareData($startDate, $shiftDays);
@@ -48,13 +51,15 @@ class Equipment extends Model
 		return $result;
 	}
 
-    /**
-     * Check are we have this date if not set new date.
-     * @param $weekDay
-     * @param $start
-     * @param $finish
-     * @return array|bool
-     */
+	/**
+	 * Check are we have this date if not set new date.
+	 *
+	 * @param $weekDay
+	 * @param $start
+	 * @param $finish
+	 *
+	 * @return array|bool
+	 */
 	public function checkAndSetDays($weekDay, $start, $finish)
 	{
 		$start = explode(':', $start);
@@ -73,23 +78,26 @@ class Equipment extends Model
 		$rents = $this->rents->where('equipment_id', $this->id)->where('rent_day', $rentDay)->first();
 		if(empty($rents)) {
 			$array = [
-				'equipment_id' =>$this->id,
-				'start'    => $start,
-				'finish'   => $finish,
-				'rent_day' => $rentDay,
-				'week_day' => $weekDay,
+				'equipment_id' => $this->id,
+				'start'        => $start,
+				'finish'       => $finish,
+				'rent_day'     => $rentDay,
+				'week_day'     => $weekDay,
 			];
+
 			return $array;
 		} else {
 			return false;
 		}
 	}
 
-    /**
-     * Convert timestamps to human readable format.
-     * @param $countedData
-     * @return mixed
-     */
+	/**
+	 * Convert timestamps to human readable format.
+	 *
+	 * @param $countedData
+	 *
+	 * @return mixed
+	 */
 	protected function convertToReadbleFormat($countedData)
 	{
 		foreach($countedData as $key => $dateArr) {
@@ -106,11 +114,13 @@ class Equipment extends Model
 		return $countedData;
 	}
 
-    /**
-     * Count our rent period per day.
-     * @param $preparedData
-     * @return mixed
-     */
+	/**
+	 * Count our rent period per day.
+	 *
+	 * @param $preparedData
+	 *
+	 * @return mixed
+	 */
 	protected function countRents($preparedData)
 	{
 		foreach($preparedData as $key => $rentTerms) {
@@ -123,11 +133,13 @@ class Equipment extends Model
 		return $preparedData;
 	}
 
-    /**
-     * Get work hours and sum it per day.
-     * @param $arr
-     * @return mixed
-     */
+	/**
+	 * Get work hours and sum it per day.
+	 *
+	 * @param $arr
+	 *
+	 * @return mixed
+	 */
 	protected function getWorkHours($arr)
 	{
 		$lenght = count($arr);
@@ -149,42 +161,48 @@ class Equipment extends Model
 		return $arr;
 	}
 
-    /**
-     * Get all equipment and take equipment from next N days.
-     * @param $startDate
-     * @param $shiftDays
-     * @return array
-     */
+	/**
+	 * Get all equipment and take equipment from next N days.
+	 *
+	 * @param $startDate
+	 * @param $shiftDays
+	 *
+	 * @return array
+	 */
 	protected function prepareData($startDate, $shiftDays)
 	{
 		$date = Carbon::parse($startDate);
-		$equipment = self::all();
+		$equipment = self::with('rents')->whereHas('rents', function ($q) use ($date) {
+			$q->where('rent_day', '>=', $date->timestamp);
+		})->get();
 		$datesArray = [];
 		$limit = count($equipment);
 		$i = 0;
-		while($i <= $limit) {
-			$equipments = self::with('rents')->whereHas('rents', function ($q) use ($date) {
-				$q->where('rent_day', $date->timestamp);
-			})->get();
+		if(!empty($limit)) {
+			while($i <= $limit) {
+				$equipments = self::with('rents')->whereHas('rents', function ($q) use ($date) {
+					$q->where('rent_day', $date->timestamp);
+				})->get();
 
-			if(count($equipments) != 0) {
-				$shiftDays--;
-				foreach($equipments as $k => $equipment) {
-					foreach($equipment->rents as $key => $rent) {
-						if($date->timestamp == $rent['rent_day']) {
-							$datesArray[$rent['rent_day']][] = [
-								$rent['start'],
-								$rent['finish'],
-							];
+				if(count($equipments) != 0) {
+					$shiftDays--;
+					$i++;
+					foreach($equipments as $k => $equipment) {
+						foreach($equipment->rents as $key => $rent) {
+							if($date->timestamp == $rent['rent_day']) {
+								$datesArray[$rent['rent_day']][] = [
+									$rent['start'],
+									$rent['finish'],
+								];
+							}
 						}
 					}
 				}
+				if($shiftDays == 0) {
+					break;
+				}
+				$date->addDay(1);
 			}
-			$i++;
-			if($shiftDays == 0) {
-				break;
-			}
-			$date->addDay(1);
 		}
 
 		return $datesArray;

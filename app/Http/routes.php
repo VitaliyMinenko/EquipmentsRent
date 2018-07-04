@@ -11,9 +11,15 @@
 |
 */
 
-
-Route::get('/api/getRentPeriod/', 'ApiController@getRentPeriod');
+/**
+ * Endpoint for getting rent equipment for the next N days
+ */
 Route::post('api/getRentPeriod/', 'ApiController@getRentPeriod');
+
+/**
+ * Endpoint set new rent period or set new equipment.
+ */
 Route::post('api/addRentPeriod/', 'ApiController@addRentPeriod');
-Route::get('api/addRentPeriod/', 'ApiController@addRentPeriod');
+
+
 
